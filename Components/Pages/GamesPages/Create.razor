@@ -1,0 +1,57 @@
+﻿@page "/games/create"
+@using Microsoft.EntityFrameworkCore
+@using BlazorWebAppGames.Models
+@inject IDbContextFactory<BlazorWebAppGames.Data.BlazorWebAppGamesContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Create</PageTitle>
+
+<h1>Create</h1>
+
+<h2>Games</h2>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <EditForm method="post" Model="Games" OnValidSubmit="AddGames" FormName="create" Enhance>
+            <DataAnnotationsValidator />
+            <ValidationSummary class="text-danger" role="alert"/>
+            <div class="mb-3">
+                <span class="text-danger">*</span>
+                <label for="title" class="form-label">Title:</label> 
+                <InputText id="title" @bind-Value="Games.Title" class="form-control" aria-required="true"/> 
+                <ValidationMessage For="() => Games.Title" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="releasedate" class="form-label">ReleaseDate:</label> 
+                <InputDate id="releasedate" @bind-Value="Games.ReleaseDate" class="form-control" /> 
+                <ValidationMessage For="() => Games.ReleaseDate" class="text-danger" /> 
+            </div>        
+            <div class="mb-3">
+                <label for="coverimageurl" class="form-label">CoverImageURL:</label> 
+                <InputText id="coverimageurl" @bind-Value="Games.CoverImageURL" class="form-control" /> 
+                <ValidationMessage For="() => Games.CoverImageURL" class="text-danger" /> 
+            </div>        
+            <button type="submit" class="btn btn-primary">Create</button>
+        </EditForm>
+    </div>
+</div>
+
+<div>
+    <a href="/games">Back to List</a>
+</div>
+
+@code {
+    [SupplyParameterFromForm]
+    private Games Games { get; set; } = default!;
+
+    protected override void OnInitialized() => Games ??= new();
+
+    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    private async Task AddGames()
+    {
+        using var context = DbFactory.CreateDbContext();
+        context.Games.Add(Games);
+        await context.SaveChangesAsync();
+        NavigationManager.NavigateTo("/games");
+    }
+}

@@ -1,0 +1,50 @@
+﻿@page "/games/details"
+@using Microsoft.EntityFrameworkCore
+@using BlazorWebAppGames.Models
+@inject IDbContextFactory<BlazorWebAppGames.Data.BlazorWebAppGamesContext> DbFactory
+@inject NavigationManager NavigationManager
+
+<PageTitle>Details</PageTitle>
+
+<h1>Details</h1>
+
+<div>
+    <h2>Games</h2>
+    <hr />
+    @if (games is null)
+    {
+        <p><em>Loading...</em></p>
+    }
+    else {
+        <dl class="row">
+            <dt class="col-sm-2">Title</dt>
+            <dd class="col-sm-10">@games.Title</dd>
+            <dt class="col-sm-2">ReleaseDate</dt>
+            <dd class="col-sm-10">@games.ReleaseDate</dd>
+            <dt class="col-sm-2">CoverImageURL</dt>
+            <dd class="col-sm-10">@games.CoverImageURL</dd>
+        </dl>
+        <div>
+            <a href="@($"/games/edit?id={games.Id}")">Edit</a> |
+            <a href="@($"/games")">Back to List</a>
+        </div>
+    }
+</div>
+
+@code {
+    private Games? games;
+
+    [SupplyParameterFromQuery]
+    private int Id { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        using var context = DbFactory.CreateDbContext();
+        games = await context.Games.FirstOrDefaultAsync(m => m.Id == Id);
+
+        if (games is null)
+        {
+            NavigationManager.NavigateTo("notfound");
+        }
+    }
+}

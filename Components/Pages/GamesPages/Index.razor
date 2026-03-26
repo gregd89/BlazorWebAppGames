@@ -1,0 +1,38 @@
+﻿@page "/games"
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.AspNetCore.Components.QuickGrid
+@using BlazorWebAppGames.Models
+@using BlazorWebAppGames.Data
+@implements IAsyncDisposable
+@inject IDbContextFactory<BlazorWebAppGames.Data.BlazorWebAppGamesContext> DbFactory
+
+<PageTitle>Index</PageTitle>
+
+<h1>Index</h1>
+
+<p>
+    <a href="games/create">Create New</a>
+</p>
+
+<QuickGrid Class="table" Items="context.Games">
+    <PropertyColumn Property="games => games.Title" />
+    <PropertyColumn Property="games => games.ReleaseDate" />
+    <PropertyColumn Property="games => games.CoverImageURL" />
+
+    <TemplateColumn Context="games">
+        <a href="@($"games/edit?id={games.Id}")">Edit</a> |
+        <a href="@($"games/details?id={games.Id}")">Details</a> |
+        <a href="@($"games/delete?id={games.Id}")">Delete</a>
+    </TemplateColumn>
+</QuickGrid>
+
+@code {
+    private BlazorWebAppGamesContext context = default!;
+
+    protected override void OnInitialized()
+    {
+        context = DbFactory.CreateDbContext();
+    }
+
+    public async ValueTask DisposeAsync() => await context.DisposeAsync();
+}
