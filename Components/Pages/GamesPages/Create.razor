@@ -30,7 +30,20 @@
                 <label for="coverimageurl" class="form-label">CoverImageURL:</label> 
                 <InputText id="coverimageurl" @bind-Value="Games.CoverImageURL" class="form-control" /> 
                 <ValidationMessage For="() => Games.CoverImageURL" class="text-danger" /> 
-            </div>        
+            </div>  
+            
+            <!-- Dropdown for Platform -->
+            <div class="mb-3">
+                <label for="platform" class="form-label">Platform:</label>
+                <InputSelect id="platform" @bind-Value="SelectedPlatformId" class="form-control">
+                    <option value="">-- Select Platform --</option>
+                    @foreach (var platform in Platforms)
+                    {
+                        <option value="@platform.Id">@platform.Name</option>
+                    }
+                </InputSelect>
+            </div>
+
             <button type="submit" class="btn btn-primary">Create</button>
         </EditForm>
     </div>
@@ -42,16 +55,44 @@
 
 @code {
     [SupplyParameterFromForm]
-    private Games Games { get; set; } = default!;
+    private Game Games { get; set; } = default!;
 
-    protected override void OnInitialized() => Games ??= new();
+    // Platforms for the dropdown
+    private List<Platform> Platforms { get; set; } = new();
 
-    // To protect from overposting attacks, see https://learn.microsoft.com/aspnet/core/blazor/forms/#mitigate-overposting-attacks.
+    // To hold the selected platform IDs
+    private int? SelectedPlatformId { get; set; }
+
+    // Method to toggle platform selection
+    protected override async Task OnInitializedAsync()
+    {
+        Games ??= new();
+
+        using var context = DbFactory.CreateDbContext();
+        Platforms = await context.Platforms
+            .OrderBy(p => p.Name)
+            .ToListAsync();
+    }
+
     private async Task AddGames()
     {
         using var context = DbFactory.CreateDbContext();
+
         context.Games.Add(Games);
         await context.SaveChangesAsync();
+
+        if (SelectedPlatformId.HasValue)
+        {
+            var gamePlatform = new GamePlatform
+            {
+                GameID = Games.Id,
+                PlatformId = SelectedPlatformId.Value
+            };
+
+            context.GamePlatforms.Add(gamePlatform);
+            await context.SaveChangesAsync();
+        }
+
         NavigationManager.NavigateTo("/games");
     }
 }

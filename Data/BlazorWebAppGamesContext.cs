@@ -1,19 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
-using BlazorWebAppGames.Models;
+﻿using Microsoft.EntityFrameworkCore;
 
 namespace BlazorWebAppGames.Data
 {
     public class BlazorWebAppGamesContext : DbContext
     {
-        public BlazorWebAppGamesContext (DbContextOptions<BlazorWebAppGamesContext> options)
+        public BlazorWebAppGamesContext(DbContextOptions<BlazorWebAppGamesContext> options)
             : base(options)
         {
         }
 
-        public DbSet<BlazorWebAppGames.Models.Games> Games { get; set; } = default!;
+        public DbSet<BlazorWebAppGames.Models.Game> Games { get; set; } = default!;
+        public DbSet<BlazorWebAppGames.Models.Platform> Platforms { get; set; } = default!;
+        public DbSet<BlazorWebAppGames.Models.GamePlatform> GamePlatforms { get; set; } = default!;
+
     }
 }

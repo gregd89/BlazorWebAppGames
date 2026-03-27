@@ -4,6 +4,7 @@ using BlazorWebAppGames.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorWebAppGames.Migrations.BlazorWebAppGames
 {
     [DbContext(typeof(BlazorWebAppGamesContext))]
-    partial class BlazorWebAppGamesContextModelSnapshot : ModelSnapshot
+    [Migration("20260326205824_AddedGamePlatform")]
+    partial class AddedGamePlatform
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -33,6 +36,9 @@ namespace BlazorWebAppGames.Migrations.BlazorWebAppGames
                     b.Property<string>("CoverImageURL")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("PlatformId")
+                        .HasColumnType("int");
+
                     b.Property<DateOnly?>("ReleaseDate")
                         .HasColumnType("date");
 
@@ -41,6 +47,8 @@ namespace BlazorWebAppGames.Migrations.BlazorWebAppGames
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("PlatformId");
 
                     b.ToTable("Games");
                 });
@@ -86,10 +94,19 @@ namespace BlazorWebAppGames.Migrations.BlazorWebAppGames
                     b.ToTable("Platforms");
                 });
 
+            modelBuilder.Entity("BlazorWebAppGames.Models.Game", b =>
+                {
+                    b.HasOne("BlazorWebAppGames.Models.Platform", "Platform")
+                        .WithMany()
+                        .HasForeignKey("PlatformId");
+
+                    b.Navigation("Platform");
+                });
+
             modelBuilder.Entity("BlazorWebAppGames.Models.GamePlatform", b =>
                 {
                     b.HasOne("BlazorWebAppGames.Models.Game", "Game")
-                        .WithMany("GamePlatforms")
+                        .WithMany()
                         .HasForeignKey("GameID")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -103,11 +120,6 @@ namespace BlazorWebAppGames.Migrations.BlazorWebAppGames
                     b.Navigation("Game");
 
                     b.Navigation("Platform");
-                });
-
-            modelBuilder.Entity("BlazorWebAppGames.Models.Game", b =>
-                {
-                    b.Navigation("GamePlatforms");
                 });
 
             modelBuilder.Entity("BlazorWebAppGames.Models.Platform", b =>

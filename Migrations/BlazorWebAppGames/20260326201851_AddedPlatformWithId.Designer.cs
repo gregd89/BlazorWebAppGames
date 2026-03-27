@@ -4,6 +4,7 @@ using BlazorWebAppGames.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlazorWebAppGames.Migrations.BlazorWebAppGames
 {
     [DbContext(typeof(BlazorWebAppGamesContext))]
-    partial class BlazorWebAppGamesContextModelSnapshot : ModelSnapshot
+    [Migration("20260326201851_AddedPlatformWithId")]
+    partial class AddedPlatformWithId
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,7 +68,7 @@ namespace BlazorWebAppGames.Migrations.BlazorWebAppGames
 
                     b.HasIndex("PlatformId");
 
-                    b.ToTable("GamePlatforms");
+                    b.ToTable("GamePlatform");
                 });
 
             modelBuilder.Entity("BlazorWebAppGames.Models.Platform", b =>
@@ -95,7 +98,7 @@ namespace BlazorWebAppGames.Migrations.BlazorWebAppGames
                         .IsRequired();
 
                     b.HasOne("BlazorWebAppGames.Models.Platform", "Platform")
-                        .WithMany("GamePlatforms")
+                        .WithMany("GanePlatforms")
                         .HasForeignKey("PlatformId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -112,7 +115,7 @@ namespace BlazorWebAppGames.Migrations.BlazorWebAppGames
 
             modelBuilder.Entity("BlazorWebAppGames.Models.Platform", b =>
                 {
-                    b.Navigation("GamePlatforms");
+                    b.Navigation("GanePlatforms");
                 });
 #pragma warning restore 612, 618
         }

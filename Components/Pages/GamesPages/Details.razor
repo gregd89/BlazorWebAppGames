@@ -23,6 +23,9 @@
             <dd class="col-sm-10">@games.ReleaseDate</dd>
             <dt class="col-sm-2">CoverImageURL</dt>
             <dd class="col-sm-10">@games.CoverImageURL</dd>
+            <dt class="col-sm-2">Platform</dt>
+            <dd class="col-sm-10">@string.Join(", ", games.GamePlatforms.Select(gp => gp.Platform.Name))</dd>
+
         </dl>
         <div>
             <a href="@($"/games/edit?id={games.Id}")">Edit</a> |
@@ -32,7 +35,7 @@
 </div>
 
 @code {
-    private Games? games;
+    private Game? games;
 
     [SupplyParameterFromQuery]
     private int Id { get; set; }
@@ -40,7 +43,10 @@
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        games = await context.Games.FirstOrDefaultAsync(m => m.Id == Id);
+        games = await context.Games
+            .Include(g => g.GamePlatforms)
+            .ThenInclude(gp => gp.Platform)
+            .FirstOrDefaultAsync(m => m.Id == Id);
 
         if (games is null)
         {
