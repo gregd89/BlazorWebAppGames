@@ -2,7 +2,7 @@
 
 namespace BlazorWebAppGames.Models
 {
-    public class Games
+    public class Game
     {
         public int Id { get; set; }
 
@@ -12,5 +12,7 @@ namespace BlazorWebAppGames.Models
         public DateOnly? ReleaseDate { get; set; }
 
         public string? CoverImageURL { get; set; }
+
+        public ICollection<GamePlatform> GamePlatforms { get; set; } = new List<GamePlatform>();
     }
 }

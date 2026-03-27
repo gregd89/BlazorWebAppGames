@@ -18,6 +18,11 @@
     <PropertyColumn Property="games => games.Title" />
     <PropertyColumn Property="games => games.ReleaseDate" Title="Release Date" />
     <PropertyColumn Property="games => games.CoverImageURL" />
+    <PropertyColumn Property="games => games.Id" Title="ID" />
+
+    <TemplateColumn Title="Platform" Context="game">
+        @string.Join(", ", game.GamePlatforms.Select(gp => gp.Platform.Name))
+    </TemplateColumn>
 
     <TemplateColumn Context="games">
         <a href="@($"games/edit?id={games.Id}")">Edit</a> |
@@ -27,12 +32,16 @@
 </QuickGrid>
 
 @code {
+    private List<Game> Games = new();
     private BlazorWebAppGamesContext context = default!;
 
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
+        Games = context.Games.Include(g => g.GamePlatforms).ThenInclude(gp => gp.Platform).ToList();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
+
+   
 }

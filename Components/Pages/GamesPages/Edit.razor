@@ -38,6 +38,19 @@ else
                     <InputText id="coverimageurl" @bind-Value="Games.CoverImageURL" class="form-control" />
                     <ValidationMessage For="() => Games.CoverImageURL" class="text-danger" />
                 </div>
+
+                <!-- Dropdown for Platform -->
+                <div class="mb-3">
+                    <label for="platform" class="form-label">Platform:</label>
+                    <InputSelect id="platform" @bind-Value="SelectedPlatformId" class="form-control">
+                        <option value="">-- Select Platform --</option>
+                        @foreach (var platform in Platforms)
+                        {
+                            <option value="@platform.Id">@platform.Name</option>
+                        }
+                    </InputSelect>
+                </div>
+
                 <button type="submit" class="btn btn-primary">Save</button>
             </EditForm>
         </div>
@@ -53,17 +66,35 @@ else
     private int Id { get; set; }
 
     [SupplyParameterFromForm]
-    private Games? Games { get; set; }
+    private Game Games { get; set; } = default!;
+
+    // Platforms for the dropdown
+    private List<Platform> Platforms { get; set; } = new();
+
+    // To hold the selected platform IDs
+    private int? SelectedPlatformId { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         using var context = DbFactory.CreateDbContext();
-        Games ??= await context.Games.FirstOrDefaultAsync(m => m.Id == Id);
+
+        Games = await context.Games
+            .Include(g => g.GamePlatforms)
+            .FirstOrDefaultAsync(g => g.Id == Id);
+
+        Platforms = await context.Platforms
+            .OrderBy(p => p.Name)
+            .ToListAsync();
 
         if (Games is null)
         {
             NavigationManager.NavigateTo("notfound");
+            return;
         }
+
+        SelectedPlatformId = Games.GamePlatforms
+            .Select(gp => (int?)gp.PlatformId)
+            .FirstOrDefault();
     }
 
     // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -71,30 +102,33 @@ else
     private async Task UpdateGames()
     {
         using var context = DbFactory.CreateDbContext();
-        context.Attach(Games!).State = EntityState.Modified;
 
-        try
+        var gameToUpdate = await context.Games
+            .Include(g => g.GamePlatforms)
+            .FirstOrDefaultAsync(g => g.Id == Id);
+
+        if (gameToUpdate is null || Games is null)
         {
-            await context.SaveChangesAsync();
-        }
-        catch (DbUpdateConcurrencyException)
-        {
-            if (!GamesExists(Games!.Id))
-            {
-                NavigationManager.NavigateTo("notfound");
-            }
-            else
-            {
-                throw;
-            }
+            NavigationManager.NavigateTo("notfound");
+            return;
         }
 
+        gameToUpdate.Title = Games.Title;
+        gameToUpdate.ReleaseDate = Games.ReleaseDate;
+        gameToUpdate.CoverImageURL = Games.CoverImageURL;
+
+        context.GamePlatforms.RemoveRange(gameToUpdate.GamePlatforms);
+
+        if (SelectedPlatformId.HasValue)
+        {
+            context.GamePlatforms.Add(new GamePlatform
+            {
+                GameID = gameToUpdate.Id,
+                PlatformId = SelectedPlatformId.Value
+            });
+        }
+
+        await context.SaveChangesAsync();
         NavigationManager.NavigateTo("/games");
-    }
-
-    private bool GamesExists(int id)
-    {
-        using var context = DbFactory.CreateDbContext();
-        return context.Games.Any(e => e.Id == id);
     }
 }
