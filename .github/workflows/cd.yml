@@ -3,9 +3,9 @@ name: CD pipeline
 # Define when the workflow should run. On a push to main, a PR to main or manually with worfkow_dispatch
 on: 
   push:
-    branches: [ main ] 
+    branches: [ "main", "master" ] 
   pull_request:
-    branches: [ main ]
+    branches: [ "main", "master" ]
   workflow_dispatch:
 
 # Define some jobs that should run
