@@ -76,3 +76,8 @@ jobs:
       with:
         workflows: 'CI CD Pipeline'
         default-branch: 'master'
+    - name: DORA lead time for changes
+      uses: DeveloperMetrics/lead-time-for-changes@v1.2.24
+      with:
+        workflows: 'CI CD Pipeline'
+        default-branch: 'master'
