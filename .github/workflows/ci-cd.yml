@@ -71,5 +71,5 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: DORA deployment frequency
+    - name: DORA deployment frequency
       uses: DeveloperMetrics/deployment-frequency@v1.5.22  
