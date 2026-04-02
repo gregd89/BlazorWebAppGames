@@ -66,5 +66,10 @@ jobs:
 
 # Metrics
 Metrics:
+    name: Metrics
+    needs: [DeployProduction]
+    runs-on: ubuntu-latest
+    
+    steps:
       - name: DORA deployment frequency
        uses: DeveloperMetrics/deployment-frequency@v1.5.22  
