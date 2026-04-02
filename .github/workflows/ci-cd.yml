@@ -72,4 +72,4 @@ jobs:
     
     steps:
       - name: DORA deployment frequency
-       uses: DeveloperMetrics/deployment-frequency@v1.5.22  
+      uses: DeveloperMetrics/deployment-frequency@v1.5.22  
