@@ -65,7 +65,7 @@ jobs:
         run: echo I am deploying to production
 
 # Metrics
-Metrics:
+  Metrics:
     name: Metrics
     needs: [DeployProduction]
     runs-on: ubuntu-latest
