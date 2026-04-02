@@ -22,6 +22,9 @@ jobs:
       - name: Restore
         run: dotnet restore BlazorWebAppGames.csproj
 
+      - name: Lint Action
+        uses: wearerequired/lint-action@v2.3.0
+
       - name: Build
         run: dotnet build BlazorWebAppGames.csproj --configuration Release --no-restore
 
