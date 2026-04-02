@@ -22,9 +22,15 @@ jobs:
       - name: Restore
         run: dotnet restore BlazorWebAppGames.csproj
 
-      - name: Lint Action
-        uses: wearerequired/lint-action@v2.3.0
-
+      - name: Run linters
+        uses: wearerequired/lint-action@v2
+        with:
+          auto_fix: true
+          black: true
+          black_auto_fix: true
+          flake8: true
+          flake8_auto_fix: false
+          
       - name: Build
         run: dotnet build BlazorWebAppGames.csproj --configuration Release --no-restore
 
@@ -51,7 +57,6 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: Staging
-      url: 'http://test.myapp.com'
     steps:
     - name: Deploy
       run: echo I am deploying to staging 
