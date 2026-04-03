@@ -28,6 +28,13 @@ jobs:
       - name: Build
         run: dotnet build BlazorWebAppGames.csproj --configuration Release --no-restore
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: blazorwebappgames-artifact
+          path: bin/Release/
+          if-no-files-found: error        
+
 # Define a deploy to development environment job
   DeployDev:
     name: Deploy to Development
