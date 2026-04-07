@@ -13,6 +13,9 @@ namespace BlazorWebAppGames.Models
 
         public string? CoverImageURL { get; set; }
 
+        [Required]
+        public GameStatus Status { get; set; } = GameStatus.Backlog;
+
         public ICollection<GamePlatform> GamePlatforms { get; set; } = new List<GamePlatform>();
     }
 }

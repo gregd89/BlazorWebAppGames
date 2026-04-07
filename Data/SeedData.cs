@@ -20,19 +20,22 @@ namespace BlazorWebAppGames.Data
                     {
                         Title = "The Legend of Zelda: Breath of the Wild",
                         ReleaseDate = new DateOnly(2017, 3, 3),
-                        CoverImageURL = "https://upload.wikimedia.org/wikipedia/en/0/0b/The_Legend_of_Zelda_Breath_of_the_Wild.jpg"
+                        CoverImageURL = "https://upload.wikimedia.org/wikipedia/en/0/0b/The_Legend_of_Zelda_Breath_of_the_Wild.jpg",
+                        Status = GameStatus.Backlog
                     },
                     new Game
                     {
                         Title = "God of War",
                         ReleaseDate = new DateOnly(2018, 4, 20),
-                        CoverImageURL = "https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg"
+                        CoverImageURL = "https://upload.wikimedia.org/wikipedia/en/a/a7/God_of_War_4_cover.jpg",
+                        Status = GameStatus.Backlog
                     },
                     new Game
                     {
                         Title = "Red Dead Redemption 2",
                         ReleaseDate = new DateOnly(2018, 10, 26),
-                        CoverImageURL = "https://upload.wikimedia.org/wikipedia/en/4/44/Red_Dead_Redemption_II.jpg"
+                        CoverImageURL = "https://upload.wikimedia.org/wikipedia/en/4/44/Red_Dead_Redemption_II.jpg",
+                        Status = GameStatus.Backlog
                     }
                 );
                 context.SaveChanges();
