@@ -38,6 +38,13 @@
             </dd>
         </dl>
 
+        <dl class="row">
+            <dt class="col-sm-2">Status</dt>
+            <dd class="col-sm-10">@games.Status</dd>
+        </dl>
+
+        
+
         <EditForm method="post" Model="games" OnValidSubmit="DeleteGames" FormName="delete" Enhance>
             <button type="submit" class="btn btn-danger" disabled="@(games is null)">Delete</button> |
             <a href="/games">Back to List</a>
