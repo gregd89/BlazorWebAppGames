@@ -22,7 +22,7 @@
     <a href="games/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="FilteredMovies" Pagination="pagination">
+<QuickGrid Class="table" Items="FilteredGames" Pagination="pagination">
     <PropertyColumn Property="games => games.Title" />
     <PropertyColumn Property="games => games.ReleaseDate" Title="Release Date" />
     <PropertyColumn Property="games => games.CoverImageURL" />
@@ -51,7 +51,7 @@
     [SupplyParameterFromQuery]
     private string? TitleFilter { get; set; }
 
-    private IQueryable<Game> FilteredMovies =>
+    private IQueryable<Game> FilteredGames =>
         context.Games.Where(m => m.Title!.Contains(TitleFilter ?? string.Empty));
 
     // Pagination
