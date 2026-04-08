@@ -15,6 +15,27 @@
     <input type="search" @bind="titleFilter" @bind:event="oninput" />
 </div>
 
+<!-- Filters -->
+<div>
+    <select @bind="selectedPlatformId">
+        <option value="">All Platforms</option>
+        @foreach (var platform in Platforms)
+        {
+            <option value="@platform.Id">@platform.Name</option>
+        }
+    </select>
+
+    <select @bind="selectedStatus">
+        <option value="">All Statuses</option>
+        @foreach (var status in StatusOptions)
+        {
+            <option value="@status">@status</option>
+        }
+    </select>
+
+    <button @onclick="ClearFilters">Clear Filters</button>
+</div>
+
 <p>
     <a href="games/create">Create New</a>
 </p>
@@ -23,7 +44,6 @@
     <PropertyColumn Property="games => games.Title" />
     <PropertyColumn Property="games => games.ReleaseDate" Title="Release Date" />
     <PropertyColumn Property="games => games.CoverImageURL" />
-    <PropertyColumn Property="games => games.Id" Title="ID" />
 
     <TemplateColumn Title="Platform" Context="game">
         @string.Join(", ", game.GamePlatforms.Select(gp => gp.Platform.Name))
@@ -43,20 +63,61 @@
 @code {
     private List<Game> Games = new();
     private BlazorWebAppGamesContext context = default!;
+    private List<Platform> Platforms = new();
+    private List<GameStatus> StatusOptions = new();
 
     // Search Feature Logic
     private string titleFilter = string.Empty;
 
-    private IQueryable<Game> FilteredGames =>
+    private IQueryable<Game> SearchedGames =>
         context.Games.Where(m => m.Title!.Contains(titleFilter));
 
     // Pagination
     private PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
 
+    // Filter Logic
+    private string selectedPlatformId = string.Empty;
+    private string selectedStatus = string.Empty;
+
+    private IQueryable<Game> FilteredGames
+    {
+        get
+        {
+            var games = SearchedGames;
+
+            if (!string.IsNullOrWhiteSpace(selectedPlatformId))
+            {
+                games = games.Where(g =>
+                    g.GamePlatforms.Any(gp => gp.PlatformId.ToString() == selectedPlatformId));
+            }
+
+            if (!string.IsNullOrWhiteSpace(selectedStatus) &&
+                Enum.TryParse<GameStatus>(selectedStatus, out var statusValue))
+            {
+                games = games.Where(g => g.Status == statusValue);
+            }
+
+            return games.AsQueryable();
+        }
+    }
+
+    private void ClearFilters()
+    {
+        titleFilter = string.Empty;
+        selectedPlatformId = string.Empty;
+        selectedStatus = string.Empty;
+    }
+
     protected override void OnInitialized()
     {
         context = DbFactory.CreateDbContext();
         Games = context.Games.Include(g => g.GamePlatforms).ThenInclude(gp => gp.Platform).ToList();
+
+        Platforms = context.Platforms
+            .OrderBy(p => p.Name)
+            .ToList();
+
+        StatusOptions = Enum.GetValues<GameStatus>().ToList();
     }
 
     public async ValueTask DisposeAsync() => await context.DisposeAsync();
