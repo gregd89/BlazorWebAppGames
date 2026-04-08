@@ -12,10 +12,7 @@
 
 <!-- Search box -->
 <div>
-    <form action="/games" data-enhance data-permanent>
-        <input type="search" name="titleFilter" />
-        <input type="submit" value="Search" />
-    </form>
+    <input type="search" @bind="titleFilter" @bind:event="oninput" />
 </div>
 
 <p>
@@ -48,11 +45,10 @@
     private BlazorWebAppGamesContext context = default!;
 
     // Search Feature Logic
-    [SupplyParameterFromQuery]
-    private string? TitleFilter { get; set; }
+    private string titleFilter = string.Empty;
 
     private IQueryable<Game> FilteredGames =>
-        context.Games.Where(m => m.Title!.Contains(TitleFilter ?? string.Empty));
+        context.Games.Where(m => m.Title!.Contains(titleFilter));
 
     // Pagination
     private PaginationState pagination = new PaginationState { ItemsPerPage = 10 };
