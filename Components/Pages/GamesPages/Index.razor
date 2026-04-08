@@ -10,11 +10,19 @@
 
 <h1>Index</h1>
 
+<!-- Search box -->
+<div>
+    <form action="/games" data-enhance data-permanent>
+        <input type="search" name="titleFilter" />
+        <input type="submit" value="Search" />
+    </form>
+</div>
+
 <p>
     <a href="games/create">Create New</a>
 </p>
 
-<QuickGrid Class="table" Items="context.Games">
+<QuickGrid Class="table" Items="FilteredMovies">
     <PropertyColumn Property="games => games.Title" />
     <PropertyColumn Property="games => games.ReleaseDate" Title="Release Date" />
     <PropertyColumn Property="games => games.CoverImageURL" />
@@ -36,6 +44,13 @@
 @code {
     private List<Game> Games = new();
     private BlazorWebAppGamesContext context = default!;
+
+    // Search Feature Logic
+    [SupplyParameterFromQuery]
+    private string? TitleFilter { get; set; }
+
+    private IQueryable<Game> FilteredMovies =>
+        context.Games.Where(m => m.Title!.Contains(TitleFilter ?? string.Empty));
 
     protected override void OnInitialized()
     {
