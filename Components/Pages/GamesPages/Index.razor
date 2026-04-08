@@ -24,6 +24,8 @@
         @string.Join(", ", game.GamePlatforms.Select(gp => gp.Platform.Name))
     </TemplateColumn>
 
+    <PropertyColumn Property="games => games.Status" />
+
     <TemplateColumn Context="games">
         <a href="@($"games/edit?id={games.Id}")">Edit</a> |
         <a href="@($"games/details?id={games.Id}")">Details</a> |
