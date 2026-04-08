@@ -43,14 +43,10 @@
 <QuickGrid Class="table" Items="FilteredGames" Pagination="pagination">
     <PropertyColumn Property="games => games.Title" />
     <PropertyColumn Property="games => games.ReleaseDate" Title="Release Date" />
-    <PropertyColumn Property="games => games.CoverImageURL" />
-
+    <PropertyColumn Property="games => games.Status" />
     <TemplateColumn Title="Platform" Context="game">
         @string.Join(", ", game.GamePlatforms.Select(gp => gp.Platform.Name))
     </TemplateColumn>
-
-    <PropertyColumn Property="games => games.Status" />
-
     <TemplateColumn Context="games">
         <a href="@($"games/edit?id={games.Id}")">Edit</a> |
         <a href="@($"games/details?id={games.Id}")">Details</a> |

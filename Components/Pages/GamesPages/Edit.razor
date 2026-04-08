@@ -8,7 +8,7 @@
 
 <h1>Edit</h1>
 
-<h2>Games</h2>
+<h2>Game</h2>
 <hr />
 @if (Games is null)
 {
@@ -32,11 +32,6 @@ else
                     <label for="releasedate" class="form-label">Release Date:</label>
                     <InputDate id="releasedate" @bind-Value="Games.ReleaseDate" class="form-control" />
                     <ValidationMessage For="() => Games.ReleaseDate" class="text-danger" />
-                </div>
-                <div class="mb-3">
-                    <label for="coverimageurl" class="form-label">CoverImageURL:</label>
-                    <InputText id="coverimageurl" @bind-Value="Games.CoverImageURL" class="form-control" />
-                    <ValidationMessage For="() => Games.CoverImageURL" class="text-danger" />
                 </div>
 
                 <!-- Dropdown for Platform -->
