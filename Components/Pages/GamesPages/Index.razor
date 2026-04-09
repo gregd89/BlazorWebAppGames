@@ -36,6 +36,22 @@
     <button @onclick="ClearFilters">Clear Filters</button>
 </div>
 
+<!-- Sorting -->
+<div class="mb-3">
+    <label>Sort By</label>
+    <select @bind="selectedSort" class="form-select">
+        <option value="">Default</option>
+        <option value="title_asc">Title (A-Z)</option>
+        <option value="title_desc">Title (Z-A)</option>
+        <option value="date_asc">Release Date (Oldest First)</option>
+        <option value="date_desc">Release Date (Newest First)</option>
+        <option value="status_asc">Status (A-Z)</option>
+        <option value="status_desc">Status (Z-A)</option>
+        <option value="platform_asc">Platform (A-Z)</option>
+        <option value="platform_desc">Platform (Z-A)</option>
+    </select>
+</div>
+
 <p>
     <a href="games/create">Create New</a>
 </p>
@@ -79,7 +95,9 @@
     {
         get
         {
-            var games = SearchedGames;
+            IQueryable<Game> games = SearchedGames
+                .Include(g => g.GamePlatforms)
+                .ThenInclude(gp => gp.Platform);
 
             if (!string.IsNullOrWhiteSpace(selectedPlatformId))
             {
@@ -93,6 +111,23 @@
                 games = games.Where(g => g.Status == statusValue);
             }
 
+            games = selectedSort switch
+            {
+                "title_asc" => games.OrderBy(g => g.Title),
+                "title_desc" => games.OrderByDescending(g => g.Title),
+                "date_asc" => games.OrderBy(g => g.ReleaseDate),
+                "date_desc" => games.OrderByDescending(g => g.ReleaseDate),
+                "status_asc" => games.OrderBy(g => g.Status),
+                "status_desc" => games.OrderByDescending(g => g.Status),
+                "platform_asc" => games.OrderBy(g => g.GamePlatforms
+                    .Select(gp => gp.Platform.Name)
+                    .FirstOrDefault()),
+                "platform_desc" => games.OrderByDescending(g => g.GamePlatforms
+                    .Select(gp => gp.Platform.Name)
+                    .FirstOrDefault()),
+                _ => games.OrderBy(g => g.Title)
+            };
+
             return games.AsQueryable();
         }
     }
@@ -103,6 +138,10 @@
         selectedPlatformId = string.Empty;
         selectedStatus = string.Empty;
     }
+
+    // Sorting logic
+    private string selectedSort = "";
+
 
     protected override void OnInitialized()
     {
